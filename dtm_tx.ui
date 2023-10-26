@@ -28,7 +28,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
-     <widget class="QFrame" name="frame_3">
+     <widget class="QFrame" name="input_frame">
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
       </property>
@@ -138,7 +138,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="npackets_select"/>
+        <widget class="QSpinBox" name="packet_len_select"/>
        </item>
       </layout>
      </widget>

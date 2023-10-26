@@ -30,10 +30,9 @@ def serial_ports():
             result.append(port)
         except (OSError, serial.SerialException):
             pass
-    
-    SERIAL_LIST_LINUX='/dev/serial/by-id'
 
-        
+    SERIAL_LIST_LINUX = '/dev/serial/by-id'
+
     if os.path.exists(SERIAL_LIST_LINUX):
         dir_list = os.listdir(SERIAL_LIST_LINUX)
 
