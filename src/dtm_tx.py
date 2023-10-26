@@ -92,7 +92,8 @@ class MainWindow(QMainWindow):
             payload = BLE_hci.TX_PACKET_TYPES[self.win.packet_type_select.currentText(
             )]
             phy = BLE_hci.TX_PHY_TYPES[self.win.phy_select.currentText()]
-            packet_len = self.win.packet_len_select
+            packet_len = self.win.packet_len_select.value()
+
             try:
                 hci.txPowerFunc(BLE_hci.Namespace(power=tx_power, handle="0"))
                 hci.txTestFunc(BLE_hci.Namespace(
@@ -106,10 +107,10 @@ class MainWindow(QMainWindow):
         else:
             self.enable_inputs()
             self.dtm_test_started = False
+            self.win.start_stop_btn.setText('START')
             try:
                 hci.endTestFunc(None)
             except:
-                self.win.start_stop_btn.setText('START')
                 self.show_basic_msg_box('Failed to end test!')
 
     def show_basic_msg_box(self, msg):
