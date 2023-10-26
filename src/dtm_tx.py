@@ -23,9 +23,28 @@ class MainWindow(QMainWindow):
             len(BLE_util.AVAILABLE_TX_POWERS) - 1)
         self.ui.channel_select.setRange(
             BLE_util.MIN_CHANNEL, BLE_util.MAX_CHANNEL)
+
+        self.ui.channel_select.valueChanged.connect(self.slider_value_changed)
+        self.ui.packet_len_select.valueChanged.connect(
+            self.slider_value_changed)
+
         self.ui.baud_rate_select.setValue(hci_util.DEFAULT_BAUDRATE)
+
         self.ui.start_stop_btn.clicked.connect(self.dtm_btn_click)
-        self.inputs_disabled = False
+
+        self.set_channel_label(0)
+        self.set_packet_len_label(0)
+        
+
+    def set_channel_label(self, channel):
+        self.ui.channel_label.setText(f'Channel {channel}')
+
+    def set_packet_len_label(self, packet_len):
+        self.ui.packet_len_label.setText(f'Packet Length {packet_len}')
+
+    def slider_value_changed(self):
+        self.set_channel_label(self.ui.channel_select.value())
+        self.set_packet_len_label(self.ui.packet_len_select.value())
 
     def dtm_btn_click(self):
 
@@ -41,9 +60,7 @@ class MainWindow(QMainWindow):
         try:
             hci.resetFun(None)
         except:
-            msg_box = QMessageBox()
-            msg_box.setText("Failed to reset Device!")
-            msg_box.exec()
+            self.show_basic_msg_box('Failed to reset devices!')
             return
 
         if self.ui.start_stop_btn.text() == 'START':
@@ -57,29 +74,32 @@ class MainWindow(QMainWindow):
                     channel=channel, phy=phy, payload=0, packetLength=packet_len))
                 self.disable_inputs()
             except:
-                pass
+                self.show_basic_msg_box('Failed to start test')
+                
 
             self.ui.start_stop_btn.setText('STOP')
 
         else:
+            self.enable_inputs()
 
             try:
                 hci.endTestFunc(None)
             except:
-                msg_box = QMessageBox()
-                msg_box.setText("Failed to reset Device!")
-                msg_box.exec()
+                self.ui.start_stop_btn.setText('START')
+                self.show_basic_msg_box('Failed to end test!')
 
-            self.enable_inputs()
-            self.ui.start_stop_btn.setText('START')
+    def show_basic_msg_box(self, msg):
+        msg_box = QMessageBox()
+        msg_box.setText(msg)
+        msg_box.exec()
 
     def disable_inputs(self):
         self.ui.input_frame.setDisabled(True)
-        self.inputs_disabled = True
+        
 
     def enable_inputs(self):
         self.ui.input_frame.setDisabled(False)
-        self.inputs_disabled = False
+        
 
 
 if __name__ == "__main__":

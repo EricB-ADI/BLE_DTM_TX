@@ -17,8 +17,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QHBoxLayout,
     QLabel, QMainWindow, QMenuBar, QPushButton,
-    QSizePolicy, QSpinBox, QStatusBar, QVBoxLayout,
-    QWidget)
+    QSizePolicy, QSlider, QSpinBox, QStatusBar,
+    QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -83,25 +83,29 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.power_select)
 
-        self.label_5 = QLabel(self.input_frame)
-        self.label_5.setObjectName(u"label_5")
-        self.label_5.setMaximumSize(QSize(16777215, 20))
+        self.channel_label = QLabel(self.input_frame)
+        self.channel_label.setObjectName(u"channel_label")
+        self.channel_label.setMaximumSize(QSize(16777215, 20))
 
-        self.verticalLayout.addWidget(self.label_5)
+        self.verticalLayout.addWidget(self.channel_label)
 
-        self.channel_select = QSpinBox(self.input_frame)
+        self.channel_select = QSlider(self.input_frame)
         self.channel_select.setObjectName(u"channel_select")
+        self.channel_select.setMaximum(39)
+        self.channel_select.setOrientation(Qt.Horizontal)
 
         self.verticalLayout.addWidget(self.channel_select)
 
-        self.label_7 = QLabel(self.input_frame)
-        self.label_7.setObjectName(u"label_7")
-        self.label_7.setMaximumSize(QSize(16777215, 20))
+        self.packet_len_label = QLabel(self.input_frame)
+        self.packet_len_label.setObjectName(u"packet_len_label")
+        self.packet_len_label.setMaximumSize(QSize(16777215, 20))
 
-        self.verticalLayout.addWidget(self.label_7)
+        self.verticalLayout.addWidget(self.packet_len_label)
 
-        self.packet_len_select = QSpinBox(self.input_frame)
+        self.packet_len_select = QSlider(self.input_frame)
         self.packet_len_select.setObjectName(u"packet_len_select")
+        self.packet_len_select.setMaximum(255)
+        self.packet_len_select.setOrientation(Qt.Horizontal)
 
         self.verticalLayout.addWidget(self.packet_len_select)
 
@@ -145,8 +149,8 @@ class Ui_MainWindow(object):
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Baud", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"PHY", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Power", None))
-        self.label_5.setText(QCoreApplication.translate("MainWindow", u"Channel", None))
-        self.label_7.setText(QCoreApplication.translate("MainWindow", u"Packet Length", None))
+        self.channel_label.setText(QCoreApplication.translate("MainWindow", u"Channel", None))
+        self.packet_len_label.setText(QCoreApplication.translate("MainWindow", u"Packet Length", None))
         self.start_stop_btn.setText(QCoreApplication.translate("MainWindow", u"START", None))
     # retranslateUi
 
