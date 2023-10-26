@@ -67,7 +67,7 @@ defaultSupTimeout = "0x64"  # 1 s
 defaultDevAddr = "00:11:22:33:44:55"
 defaultInitAddr = defaultDevAddr
 
-TX_PHY_OPTIONS = {'PRBS9': 0,
+TX_PACKET_TYPES = {'PRBS9': 0,
                   '11110000': 1,
                   '10101010': 2,
                   'PRBS15': 3,

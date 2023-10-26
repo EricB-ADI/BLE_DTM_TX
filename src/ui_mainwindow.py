@@ -24,7 +24,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(744, 454)
+        MainWindow.resize(744, 579)
         MainWindow.setMaximumSize(QSize(16777215, 720))
         MainWindow.setLayoutDirection(Qt.LeftToRight)
         MainWindow.setAutoFillBackground(False)
@@ -71,6 +71,17 @@ class Ui_MainWindow(object):
         self.phy_select.setObjectName(u"phy_select")
 
         self.verticalLayout.addWidget(self.phy_select)
+
+        self.packet_type_label = QLabel(self.input_frame)
+        self.packet_type_label.setObjectName(u"packet_type_label")
+        self.packet_type_label.setMaximumSize(QSize(16777215, 20))
+
+        self.verticalLayout.addWidget(self.packet_type_label)
+
+        self.packet_type_select = QComboBox(self.input_frame)
+        self.packet_type_select.setObjectName(u"packet_type_select")
+
+        self.verticalLayout.addWidget(self.packet_type_select)
 
         self.label_4 = QLabel(self.input_frame)
         self.label_4.setObjectName(u"label_4")
@@ -148,6 +159,7 @@ class Ui_MainWindow(object):
         self.port_select.setCurrentText("")
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Baud", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"PHY", None))
+        self.packet_type_label.setText(QCoreApplication.translate("MainWindow", u"Packet Type", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Power", None))
         self.channel_label.setText(QCoreApplication.translate("MainWindow", u"Channel", None))
         self.packet_len_label.setText(QCoreApplication.translate("MainWindow", u"Packet Length", None))
