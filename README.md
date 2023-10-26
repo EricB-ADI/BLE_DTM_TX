@@ -12,6 +12,6 @@ python3 dtm_tx.py
 ## Creating Binary
 
 ```bash
-    pip install pyinstaller
-    pyinstaller dtm_tx.py
+pip install pyinstaller
+pyinstaller dtm_tx.py
 ```
