@@ -68,13 +68,20 @@ defaultDevAddr = "00:11:22:33:44:55"
 defaultInitAddr = defaultDevAddr
 
 TX_PACKET_TYPES = {'PRBS9': 0,
-                  '11110000': 1,
-                  '10101010': 2,
-                  'PRBS15': 3,
-                  '11111111': 4,
-                  '00000000': 5,
-                  '00001111': 6,
-                  '01010101': 7}
+                   '11110000': 1,
+                   '10101010': 2,
+                   'PRBS15': 3,
+                   '11111111': 4,
+                   '00000000': 5,
+                   '00001111': 6,
+                   '01010101': 7}
+
+TX_PHY_TYPES = {
+    '1M': 1,
+    '2M': 2,
+    'S8': 3,
+    'S2': 4
+}
 
 
 # Magic value for the exit function to properly return

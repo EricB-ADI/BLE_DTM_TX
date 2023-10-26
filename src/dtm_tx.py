@@ -1,3 +1,7 @@
+"""
+Main Application for DTM Testsing
+"""
+
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox
 from ui_mainwindow import Ui_MainWindow
@@ -15,21 +19,23 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super(MainWindow, self).__init__()
-        self.ui = Ui_MainWindow()
-        self.ui.setupUi(self)
+        self.win = Ui_MainWindow()
+        self.win.setupUi(self)
 
         self.refresh_port_select()
-        self.ui.baud_rate_select.setValue(hci_util.DEFAULT_BAUDRATE)
+        self.win.baud_rate_select.setValue(hci_util.DEFAULT_BAUDRATE)
 
-        self.ui.phy_select.insertItems(0, BLE_util.AVAILABLE_PHYS)
-        self.ui.packet_type_select.insertItems(0, BLE_util.TX_PACKET_TYPE_OPTIONS)
-        self.ui.power_select.insertItems(0, BLE_util.AVAILABLE_TX_POWERS)
-        self.ui.power_select.setCurrentIndex(len(BLE_util.AVAILABLE_TX_POWERS) - 1)
+        self.win.phy_select.insertItems(0, BLE_util.AVAILABLE_PHYS)
+        self.win.packet_type_select.insertItems(
+            0, BLE_util.TX_PACKET_TYPE_OPTIONS)
+        self.win.power_select.insertItems(0, BLE_util.AVAILABLE_TX_POWERS)
+        self.win.power_select.setCurrentIndex(
+            len(BLE_util.AVAILABLE_TX_POWERS) - 1)
 
-        self.ui.channel_select.valueChanged.connect(self.slider_value_changed)
-        self.ui.packet_len_select.valueChanged.connect(
+        self.win.channel_select.valueChanged.connect(self.slider_value_changed)
+        self.win.packet_len_select.valueChanged.connect(
             self.slider_value_changed)
-        self.ui.start_stop_btn.clicked.connect(self.dtm_btn_click)
+        self.win.start_stop_btn.clicked.connect(self.dtm_btn_click)
 
         self.set_channel_label(0)
         self.set_packet_len_label(0)
@@ -40,34 +46,34 @@ class MainWindow(QMainWindow):
         """
         Refreshes available ports in port selector
         """
-        self.ui.port_select.clear()
-        self.ui.port_select.insertItems(0, hci_util.serial_ports())
+        self.win.port_select.clear()
+        self.win.port_select.insertItems(0, hci_util.serial_ports())
 
     def set_channel_label(self, channel):
         """
         Sets the label to show the channel
         """
-        self.ui.channel_label.setText(f'Channel {channel}')
+        self.win.channel_label.setText(f'Channel {channel}')
 
     def set_packet_len_label(self, packet_len):
         """
         Sets the label to show the packet length
         """
-        self.ui.packet_len_label.setText(f'Packet Length {packet_len}')
+        self.win.packet_len_label.setText(f'Packet Length {packet_len}')
 
     def slider_value_changed(self):
         """
         Updates Labels whenever slider values are moved
         """
-        self.set_channel_label(self.ui.channel_select.value())
-        self.set_packet_len_label(self.ui.packet_len_select.value())
+        self.set_channel_label(self.win.channel_select.value())
+        self.set_packet_len_label(self.win.packet_len_select.value())
 
     def dtm_btn_click(self):
         """
             Starts or Stops DTM test 
         """
-        port = self.ui.port_select.currentText()
-        baud_rate = self.ui.baud_rate_select.value()
+        port = self.win.port_select.currentText()
+        baud_rate = self.win.baud_rate_select.value()
 
         hci = BLE_hci.BLE_hci(BLE_hci.Namespace(
             serialPort=port,
@@ -76,23 +82,23 @@ class MainWindow(QMainWindow):
         ))
 
         try:
-            hci.resetFun(None)
+            hci.resetFunc(None)
         except:
             self.show_basic_msg_box('Failed to reset devices!')
-            return
 
         if not self.dtm_test_started:
-            tx_power = int(self.ui.power_select.currentText().split('dbm')[0])
-            channel = int(self.ui.channel_select.value())
-            phy = BLE_hci.TX_PHY_OPTIONS[self.ui.packet_type_select.currentText(
+            tx_power = int(self.win.power_select.currentText().split('dbm')[0])
+            channel = int(self.win.channel_select.value())
+            payload = BLE_hci.TX_PACKET_TYPES[self.win.packet_type_select.currentText(
             )]
-            packet_len = self.ui.packet_len_select
+            phy = BLE_hci.TX_PHY_TYPES[self.win.phy_select.currentText()]
+            packet_len = self.win.packet_len_select
             try:
                 hci.txPowerFunc(BLE_hci.Namespace(power=tx_power, handle="0"))
                 hci.txTestFunc(BLE_hci.Namespace(
-                    channel=channel, phy=phy, payload=0, packetLength=packet_len))
+                    channel=channel, phy=phy, payload=payload, packetLength=packet_len))
                 self.disable_inputs()
-                self.ui.start_stop_btn.setText('STOP')
+                self.win.start_stop_btn.setText('STOP')
                 self.dtm_test_started = True
             except:
                 self.show_basic_msg_box('Failed to start test')
@@ -103,25 +109,32 @@ class MainWindow(QMainWindow):
             try:
                 hci.endTestFunc(None)
             except:
-                self.ui.start_stop_btn.setText('START')
+                self.win.start_stop_btn.setText('START')
                 self.show_basic_msg_box('Failed to end test!')
 
     def show_basic_msg_box(self, msg):
+        """
+            Display a basic message box with a given message
+        """
         msg_box = QMessageBox()
         msg_box.setText(msg)
         msg_box.exec()
 
     def disable_inputs(self):
-        self.ui.input_frame.setDisabled(True)
+        """
+            Disable all inputs used for DTM testing 
+            to prevent alterations before stopping the test
+        """
+        self.win.input_frame.setDisabled(True)
 
     def enable_inputs(self):
-        self.ui.input_frame.setDisabled(False)
+        """
+        Enable all DTM inputs
+        """
+        self.win.input_frame.setDisabled(False)
 
 
 if __name__ == "__main__":
-    """
-    Main
-    """
     app = QApplication(sys.argv)
 
     window = MainWindow()

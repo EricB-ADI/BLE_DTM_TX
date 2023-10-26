@@ -4,7 +4,8 @@ import glob
 import serial
 
 
-DEFAULT_BAUDRATE=115200
+DEFAULT_BAUDRATE = 115200
+
 
 def serial_ports():
     """ Lists serial port names
