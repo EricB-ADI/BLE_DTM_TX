@@ -1,57 +1,39 @@
-
-
 import sys
+from PySide6.QtWidgets import QApplication, QMainWindow
+from PySide6.QtCore import QFile
+from ui_mainwindow import Ui_MainWindow
+
+
+
 import hci_util
 import BLE_hci
 # from BLE_hci import BLE_hci, Namespace
 import BLE_util
 
-from PySide6.QtWidgets import (
-    
-    QApplication,
-    QVBoxLayout,
-    QPushButton,
-    QWidget,
-    QComboBox,
-    QSpinBox,
-    QMessageBox
-)
-
-class Window(QWidget):
-    def __init__(self) -> None:
-        super(Window,self).__init__()
-
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super(MainWindow, self).__init__()
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
         self.ports = hci_util.serial_ports()
-        self.serialPortBox = QComboBox()
-        self.baud_rate = QSpinBox()
-        self.txPhysBox = QComboBox()
-        self.tx_powers = QComboBox()
-        self.channelSelect = QSpinBox()
-        self.start_stop_btn = QPushButton('START')
-        
-        
-        self.serialPortBox.insertItems(0, self.ports)
-        self.txPhysBox.insertItems(0, list(BLE_hci.TX_PHY_OPTIONS.keys()))
-        self.tx_powers.insertItems(0, list(BLE_util.AVAILABLE_TX_POWERS))
-        self.tx_powers.setCurrentIndex(len(BLE_util.AVAILABLE_TX_POWERS) - 1)
-        self.channelSelect.setRange(BLE_util.MIN_CHANNEL, BLE_util.MAX_CHANNEL)
-        self.baud_rate.setRange(9600, 1_000_000)
-        self.baud_rate.setValue(115200)
-        self.start_stop_btn.clicked.connect(self.dtm_btn_click)
-        
-        layout = QVBoxLayout(self)
-        layout.addWidget(self.serialPortBox)
-        layout.addWidget(self.baud_rate)
-        layout.addWidget(self.txPhysBox)
-        layout.addWidget(self.tx_powers)
-        layout.addWidget(self.channelSelect)
-        layout.addWidget(self.start_stop_btn)
-        self.selected_port = ''
+
+        self.ui.port_select.insertItems(0, self.ports)
+        self.ui.phy_select.insertItems(0, list(BLE_hci.TX_PHY_OPTIONS.keys()))
+        self.ui.power_select.insertItems(0, BLE_util.AVAILABLE_TX_POWERS)
+        self.ui.power_select.setCurrentIndex(len(BLE_util.AVAILABLE_TX_POWERS) - 1)
+        self.ui.channel_select.setRange(BLE_util.MIN_CHANNEL, BLE_util.MAX_CHANNEL)
+        self.ui.baud_rate_select.setValue(115200)
+        self.ui.start_stop_btn.clicked.connect(self.dtm_btn_click)
+        self.inputs_disabled = False
 
     def dtm_btn_click(self):
         
-        port = self.serialPortBox.currentText()
-        baud_rate = self.baud_rate.value()
+        if not self.inputs_disabled:
+            self.disable_inputs()
+
+
+        port = self.ui.port_select.currentText()
+        baud_rate = self.ui.baud_rate_select.value()
         
         hci = BLE_hci.BLE_hci(BLE_hci.Namespace(
             serialPort=port,
@@ -69,10 +51,10 @@ class Window(QWidget):
             return
 
 
-        if self.start_stop_btn.text() == 'START':
-            tx_power = int(self.tx_powers.currentText().split('dbm')[0])
-            channel = int(self.channelSelect.value())
-            phy = BLE_hci.TX_PHY_OPTIONS[self.txPhysBox.currentText()]
+        if self.ui.start_stop_btn.text() == 'START':
+            tx_power = int(self.ui.power_select.currentText().split('dbm')[0])
+            channel = int(self.ui.channel_select.value())
+            phy = BLE_hci.TX_PHY_OPTIONS[self.ui.phy_select.currentText()]
             packet_len = 100
             try:
                 hci.txPowerFunc(BLE_hci.Namespace(power=tx_power, handle="0"))
@@ -81,8 +63,8 @@ class Window(QWidget):
                 pass
 
 
-            self.start_stop_btn.setText('STOP')
-            self.disable_inputs()
+            self.ui.start_stop_btn.setText('STOP')
+            
         else:
 
             try:
@@ -93,28 +75,28 @@ class Window(QWidget):
                 msg_box.exec()
             
             self.enable_inputs()
-            self.start_stop_btn.setText('START')
+            self.ui.start_stop_btn.setText('START')
 
     def disable_inputs(self):
-        self.serialPortBox.setDisabled(True) 
-        self.baud_rate.setDisabled(True) 
-        self.txPhysBox.setDisabled(True) 
-        self.tx_powers.setDisabled(True) 
-        self.channelSelect.setDisabled(True) 
-        
+        self.ui.port_select.setDisabled(True) 
+        self.ui.baud_rate_select.setDisabled(True) 
+        self.ui.phy_select.setDisabled(True) 
+        self.ui.power_select.setDisabled(True) 
+        self.ui.channel_select.setDisabled(True) 
+        self.inputs_disabled = True
     
     def enable_inputs(self):
-        self.serialPortBox.setDisabled(False) 
-        self.baud_rate.setDisabled(False) 
-        self.txPhysBox.setDisabled(False) 
-        self.tx_powers.setDisabled(False) 
-        self.channelSelect.setDisabled(False) 
+        self.ui.port_select.setDisabled(False) 
+        self.ui.baud_rate_select.setDisabled(False) 
+        self.ui.phy_select.setDisabled(False) 
+        self.ui.power_select.setDisabled(False) 
+        self.ui.channel_select.setDisabled(False) 
+        self.inputs_disabled = False
         
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
 
-if __name__ == '__main__':            
-    app = QApplication([])
-    window = Window()
-    window.setWindowTitle("DTM TX")
+    window = MainWindow()
     window.show()
-    sys.exit(app.exec())
 
+    sys.exit(app.exec())
