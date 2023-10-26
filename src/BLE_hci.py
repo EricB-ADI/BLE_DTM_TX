@@ -778,7 +778,7 @@ class BLE_hci:
         self.closeListenDiscon()
 
         # Send the HCI command for HCI Reset
-        self.send_command("01030C00")
+        return self.send_command("01030C00")
 
     # Listen for events.
      #

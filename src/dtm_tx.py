@@ -23,14 +23,11 @@ class MainWindow(QMainWindow):
             len(BLE_util.AVAILABLE_TX_POWERS) - 1)
         self.ui.channel_select.setRange(
             BLE_util.MIN_CHANNEL, BLE_util.MAX_CHANNEL)
-        self.ui.baud_rate_select.setValue(115200)
+        self.ui.baud_rate_select.setValue(hci_util.DEFAULT_BAUDRATE)
         self.ui.start_stop_btn.clicked.connect(self.dtm_btn_click)
         self.inputs_disabled = False
 
     def dtm_btn_click(self):
-
-        if not self.inputs_disabled:
-            self.disable_inputs()
 
         port = self.ui.port_select.currentText()
         baud_rate = self.ui.baud_rate_select.value()
@@ -42,7 +39,7 @@ class MainWindow(QMainWindow):
         ))
 
         try:
-            hci.resetFunc(None)
+            hci.resetFun(None)
         except:
             msg_box = QMessageBox()
             msg_box.setText("Failed to reset Device!")
@@ -58,6 +55,7 @@ class MainWindow(QMainWindow):
                 hci.txPowerFunc(BLE_hci.Namespace(power=tx_power, handle="0"))
                 hci.txTestFunc(BLE_hci.Namespace(
                     channel=channel, phy=phy, payload=0, packetLength=packet_len))
+                self.disable_inputs()
             except:
                 pass
 
