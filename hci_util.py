@@ -36,6 +36,9 @@ def serial_ports():
         
     if os.path.exists(SERIAL_LIST_LINUX):
         dir_list = os.listdir(SERIAL_LIST_LINUX)
+
+        for i, file in enumerate(dir_list):
+            dir_list[i] = os.path.join(SERIAL_LIST_LINUX, file)
         if dir_list:
             result.extend(dir_list)
 
