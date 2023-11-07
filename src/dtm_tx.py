@@ -26,15 +26,12 @@ class MainWindow(QMainWindow):
         self.win.baud_rate_select.setValue(hci_util.DEFAULT_BAUDRATE)
 
         self.win.phy_select.insertItems(0, BLE_util.AVAILABLE_PHYS)
-        self.win.packet_type_select.insertItems(
-            0, BLE_util.TX_PACKET_TYPE_OPTIONS)
+        self.win.packet_type_select.insertItems(0, BLE_util.TX_PACKET_TYPE_OPTIONS)
         self.win.power_select.insertItems(0, BLE_util.AVAILABLE_TX_POWERS)
-        self.win.power_select.setCurrentIndex(
-            len(BLE_util.AVAILABLE_TX_POWERS) - 1)
+        self.win.power_select.setCurrentIndex(len(BLE_util.AVAILABLE_TX_POWERS) - 1)
 
         self.win.channel_select.valueChanged.connect(self.slider_value_changed)
-        self.win.packet_len_select.valueChanged.connect(
-            self.slider_value_changed)
+        self.win.packet_len_select.valueChanged.connect(self.slider_value_changed)
         self.win.start_stop_btn.clicked.connect(self.dtm_btn_click)
 
         self.set_channel_label(0)
@@ -53,13 +50,13 @@ class MainWindow(QMainWindow):
         """
         Sets the label to show the channel
         """
-        self.win.channel_label.setText(f'Channel {channel}')
+        self.win.channel_label.setText(f"Channel {channel}")
 
     def set_packet_len_label(self, packet_len):
         """
         Sets the label to show the packet length
         """
-        self.win.packet_len_label.setText(f'Packet Length {packet_len}')
+        self.win.packet_len_label.setText(f"Packet Length {packet_len}")
 
     def slider_value_changed(self):
         """
@@ -70,52 +67,55 @@ class MainWindow(QMainWindow):
 
     def dtm_btn_click(self):
         """
-            Starts or Stops DTM test 
+        Starts or Stops DTM test
         """
         port = self.win.port_select.currentText()
         baud_rate = self.win.baud_rate_select.value()
 
-        hci = BLE_hci.BLE_hci(BLE_hci.Namespace(
-            serialPort=port,
-            monPort='',
-            baud=baud_rate
-        ))
+        hci = BLE_hci.BLE_hci(
+            BLE_hci.Namespace(serialPort=port, monPort="", baud=baud_rate)
+        )
 
         try:
             hci.resetFunc(None)
         except:
-            self.show_basic_msg_box('Failed to reset devices!')
+            self.show_basic_msg_box("Failed to reset devices!")
 
         if not self.dtm_test_started:
-            tx_power = int(self.win.power_select.currentText().split('dbm')[0])
+            tx_power = int(self.win.power_select.currentText().split("dbm")[0])
             channel = int(self.win.channel_select.value())
-            payload = BLE_hci.TX_PACKET_TYPES[self.win.packet_type_select.currentText(
-            )]
+            payload = BLE_hci.TX_PACKET_TYPES[self.win.packet_type_select.currentText()]
             phy = BLE_hci.TX_PHY_TYPES[self.win.phy_select.currentText()]
             packet_len = self.win.packet_len_select.value()
 
             try:
                 hci.txPowerFunc(BLE_hci.Namespace(power=tx_power, handle="0"))
-                hci.txTestFunc(BLE_hci.Namespace(
-                    channel=channel, phy=phy, payload=payload, packetLength=packet_len))
+                hci.txTestFunc(
+                    BLE_hci.Namespace(
+                        channel=channel,
+                        phy=phy,
+                        payload=payload,
+                        packetLength=packet_len,
+                    )
+                )
                 self.disable_inputs()
-                self.win.start_stop_btn.setText('STOP')
+                self.win.start_stop_btn.setText("STOP")
                 self.dtm_test_started = True
             except:
-                self.show_basic_msg_box('Failed to start test')
+                self.show_basic_msg_box("Failed to start test")
 
         else:
             self.enable_inputs()
             self.dtm_test_started = False
-            self.win.start_stop_btn.setText('START')
+            self.win.start_stop_btn.setText("START")
             try:
                 hci.endTestFunc(None)
             except:
-                self.show_basic_msg_box('Failed to end test!')
+                self.show_basic_msg_box("Failed to end test!")
 
     def show_basic_msg_box(self, msg):
         """
-            Display a basic message box with a given message
+        Display a basic message box with a given message
         """
         msg_box = QMessageBox()
         msg_box.setText(msg)
@@ -123,8 +123,8 @@ class MainWindow(QMainWindow):
 
     def disable_inputs(self):
         """
-            Disable all inputs used for DTM testing 
-            to prevent alterations before stopping the test
+        Disable all inputs used for DTM testing
+        to prevent alterations before stopping the test
         """
         self.win.input_frame.setDisabled(True)
 
